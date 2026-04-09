@@ -1,0 +1,2036 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Café Bombona — Nariño, Colombia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --night: #1c1008;
+  --espresso: #3b1f0a;
+  --mahogany: #5c2e0e;
+  --honey: #e8b87a;
+  --gold: #c9913a;
+  --parchment: #faf5ec;
+  --cream: #f2e8d4;
+  --mist: #e6d9c0;
+  --text: #2a1505;
+  --text-light: #6b4226;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Instrument Sans', system-ui, sans-serif;
+  --radius: 2px;
+  --shadow: 0 8px 40px rgba(28,16,8,0.12);
+  --transition: 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--sans);
+  background: var(--parchment);
+  color: var(--text);
+  cursor: none;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ─── NOISE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ─── CUSTOM CURSOR ─── */
+#cursor {
+  position: fixed;
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease;
+  line-height: 1;
+  will-change: transform;
+}
+#cursor.hover {
+  transform: translate(-50%, -50%) scale(1.5) rotate(-20deg);
+  filter: drop-shadow(0 0 6px var(--honey));
+}
+
+/* ─── SCROLL ANIMATIONS ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-left.visible { opacity: 1; transform: none; }
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-right.visible { opacity: 1; transform: none; }
+
+/* ─── NAVBAR ─── */
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 0 clamp(1rem, 4vw, 3rem);
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(250, 245, 236, 0.72);
+  border-bottom: 1px solid rgba(232, 184, 122, 0.25);
+  transition: var(--transition);
+}
+nav.scrolled {
+  background: rgba(28, 16, 8, 0.88);
+  border-bottom-color: rgba(232,184,122,0.15);
+}
+nav.scrolled .nav-logo,
+nav.scrolled .nav-links a,
+nav.scrolled .cart-btn { color: var(--honey); }
+nav.scrolled .nav-links a::after { background: var(--honey); }
+
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--night);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  cursor: none;
+}
+.nav-logo span { color: var(--gold); }
+
+.nav-links {
+  display: flex;
+  gap: 2.2rem;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--espresso);
+  text-decoration: none;
+  cursor: none;
+  position: relative;
+  padding-bottom: 3px;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover::after { width: 100%; }
+
+.nav-right { display: flex; align-items: center; gap: 1rem; }
+
+.cart-btn {
+  background: none;
+  border: 1.5px solid var(--gold);
+  color: var(--espresso);
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.45rem 1rem;
+  cursor: none;
+  position: relative;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cart-btn:hover {
+  background: var(--gold);
+  color: var(--parchment);
+}
+.cart-count {
+  background: var(--gold);
+  color: var(--parchment);
+  border-radius: 50%;
+  width: 18px; height: 18px;
+  font-size: 0.65rem;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  transition: var(--transition);
+}
+nav.scrolled .cart-count { background: var(--honey); color: var(--night); }
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: none;
+  padding: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 24px; height: 2px;
+  background: var(--espresso);
+  transition: var(--transition);
+}
+nav.scrolled .hamburger span { background: var(--honey); }
+
+/* ─── SECTIONS ─── */
+section { display: none; }
+section.active { display: block; }
+
+/* ─── HERO ─── */
+#inicio {
+  min-height: 100vh;
+  background: var(--night);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, #3b1f0a 0%, #1c1008 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(201,145,58,0.2) 0%, transparent 50%);
+}
+
+.floating-elements {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.float-el {
+  position: absolute;
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+  opacity: 0.12;
+  animation: floatAnim linear infinite;
+  will-change: transform;
+}
+@keyframes floatAnim {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.12; }
+  90% { opacity: 0.12; }
+  100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
+}
+
+/* Steam */
+.steam-container {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; height: 300px;
+  pointer-events: none;
+}
+.steam {
+  position: absolute;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to top, rgba(232,184,122,0.3), transparent);
+  border-radius: 50%;
+  animation: steamRise 4s ease-in infinite;
+  will-change: transform, opacity;
+}
+@keyframes steamRise {
+  0% { transform: scaleX(1) translateY(0); opacity: 0.5; height: 0; }
+  50% { transform: scaleX(2) translateY(-80px); opacity: 0.3; }
+  100% { transform: scaleX(0.5) translateY(-200px); opacity: 0; height: 200px; }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: clamp(5rem, 10vh, 8rem) clamp(1rem, 5vw, 4rem) 4rem;
+}
+
+.hero-eyebrow {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--honey);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.2s forwards;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: '';
+  width: 40px; height: 1px;
+  background: var(--honey);
+  opacity: 0.5;
+}
+
+.hero-title {
+  font-family: var(--serif);
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  font-weight: 300;
+  color: var(--parchment);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 0.9s 0.4s forwards;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--honey);
+  font-weight: 400;
+}
+
+.hero-subtitle {
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  color: rgba(250,245,236,0.6);
+  max-width: 520px;
+  line-height: 1.75;
+  font-weight: 300;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp 0.9s 0.6s forwards;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeUp 0.9s 0.8s forwards;
+}
+
+.btn-primary {
+  background: var(--honey);
+  color: var(--night);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 1rem 2.5rem;
+  border: none;
+  cursor: none;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+.btn-primary:hover::before { transform: translateX(0); }
+.btn-primary span { position: relative; z-index: 1; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--parchment);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 1rem 2.5rem;
+  border: 1px solid rgba(250,245,236,0.35);
+  cursor: none;
+  transition: var(--transition);
+}
+.btn-outline:hover { border-color: var(--honey); color: var(--honey); }
+
+.hero-stats {
+  display: flex;
+  gap: clamp(2rem, 5vw, 5rem);
+  margin-top: 5rem;
+  opacity: 0;
+  animation: fadeUp 0.9s 1s forwards;
+}
+.stat {
+  text-align: center;
+}
+.stat-num {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 600;
+  color: var(--honey);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(250,245,236,0.5);
+  margin-top: 0.3rem;
+}
+.stat-divider {
+  width: 1px;
+  background: rgba(232,184,122,0.2);
+  align-self: stretch;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ─── MARQUEE ─── */
+.marquee-section {
+  background: var(--espresso);
+  padding: 1.1rem 0;
+  overflow: hidden;
+  position: relative;
+}
+.marquee-track {
+  display: flex;
+  gap: 0;
+  white-space: nowrap;
+  animation: marqueeScroll 25s linear infinite;
+  will-change: transform;
+}
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--honey);
+  padding: 0 3rem;
+  flex-shrink: 0;
+}
+.marquee-item::after {
+  content: '✦';
+  opacity: 0.5;
+  font-size: 0.6rem;
+}
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ─── SECTION WRAPPER ─── */
+.section-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(4rem, 8vh, 7rem) clamp(1rem, 5vw, 3rem);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: clamp(3rem, 6vh, 5rem);
+}
+.section-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+.section-eyebrow::before, .section-eyebrow::after {
+  content: ''; width: 30px; height: 1px; background: var(--gold); opacity: 0.5;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 400;
+  color: var(--night);
+  line-height: 1.1;
+}
+.section-title em { font-style: italic; color: var(--mahogany); }
+.section-desc {
+  font-size: 1rem;
+  color: var(--text-light);
+  max-width: 540px;
+  margin: 1rem auto 0;
+  line-height: 1.75;
+  font-weight: 300;
+}
+
+/* ─── PRODUCTS ─── */
+#productos { background: var(--parchment); }
+
+.filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+.filter-btn {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.4rem;
+  border: 1px solid var(--mist);
+  background: transparent;
+  color: var(--text-light);
+  cursor: none;
+  transition: var(--transition);
+}
+.filter-btn:hover, .filter-btn.active {
+  background: var(--espresso);
+  border-color: var(--espresso);
+  color: var(--honey);
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.product-card {
+  background: white;
+  border: 1px solid var(--mist);
+  position: relative;
+  transition: var(--transition);
+  cursor: none;
+  overflow: hidden;
+}
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(28,16,8,0.15);
+}
+
+.card-image {
+  aspect-ratio: 4/3;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  position: relative;
+  overflow: hidden;
+}
+.card-image::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(transparent, rgba(28,16,8,0.08));
+}
+
+.card-badges {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  z-index: 1;
+}
+.badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+}
+.badge-new { background: var(--honey); color: var(--night); }
+.badge-special { background: var(--mahogany); color: var(--cream); }
+.badge-limited { background: var(--night); color: var(--honey); }
+
+.card-body { padding: 1.4rem; }
+
+.card-process {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+}
+.card-name {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--night);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+.card-desc {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  font-weight: 300;
+}
+
+.card-notes {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.note-tag {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+  background: var(--cream);
+  color: var(--text-light);
+  border-radius: 99px;
+  font-weight: 500;
+}
+
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+.stars { color: var(--gold); font-size: 0.8rem; letter-spacing: 0.05em; }
+.rating-num { font-size: 0.78rem; color: var(--text-light); font-weight: 500; }
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cream);
+}
+.card-price {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--espresso);
+}
+.card-price-sub {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  color: var(--text-light);
+  display: block;
+  font-weight: 400;
+}
+
+.add-cart-btn {
+  background: var(--night);
+  color: var(--honey);
+  border: none;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.6rem 1.2rem;
+  cursor: none;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.add-cart-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--honey);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.add-cart-btn:hover::before { transform: translateX(0); }
+.add-cart-btn:hover { color: var(--night); }
+.add-cart-btn span { position: relative; z-index: 1; }
+.add-cart-btn.added {
+  background: #2d5a1b;
+  color: #a8e063;
+}
+.add-cart-btn.added::before { display: none; }
+
+/* ─── NOSOTROS ─── */
+#nosotros { background: var(--cream); }
+
+.nosotros-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin-bottom: 5rem;
+}
+.nosotros-text h2 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 400;
+  color: var(--night);
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+}
+.nosotros-text h2 em { font-style: italic; color: var(--mahogany); }
+.nosotros-text p {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--text-light);
+  margin-bottom: 1.2rem;
+  font-weight: 300;
+}
+.nosotros-text p strong { color: var(--espresso); font-weight: 600; }
+
+.nosotros-visual {
+  position: relative;
+}
+.nosotros-card-visual {
+  background: var(--night);
+  padding: 3rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.nosotros-card-visual::before {
+  content: '☕';
+  position: absolute;
+  bottom: -1rem; right: -1rem;
+  font-size: 8rem;
+  opacity: 0.08;
+}
+.visual-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--honey);
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+}
+.visual-big {
+  font-family: var(--serif);
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 600;
+  color: var(--honey);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.visual-sub {
+  font-size: 0.85rem;
+  color: rgba(250,245,236,0.6);
+  font-weight: 300;
+}
+.visual-divider { height: 1px; background: rgba(232,184,122,0.2); margin: 1.5rem 0; }
+
+.caficultores-section h3 {
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--night);
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.caficultores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+.caficultor-card {
+  background: white;
+  padding: 2rem 1.75rem;
+  border-left: 3px solid var(--honey);
+  transition: var(--transition);
+}
+.caficultor-card:hover { transform: translateX(4px); }
+.caficultor-avatar {
+  width: 56px; height: 56px;
+  background: var(--cream);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.caficultor-name {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--night);
+  margin-bottom: 0.2rem;
+}
+.caficultor-region {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+.caficultor-bio {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--text-light);
+  font-weight: 300;
+}
+
+/* ─── BLOG ─── */
+#blog { background: var(--parchment); }
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+.blog-card {
+  background: white;
+  border: 1px solid var(--mist);
+  overflow: hidden;
+  transition: var(--transition);
+  cursor: none;
+}
+.blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+.blog-card-img {
+  height: 200px;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.blog-card-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 60%, rgba(28,16,8,0.1));
+}
+.blog-card-body { padding: 1.5rem; }
+.blog-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.blog-cat {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  background: var(--cream);
+  color: var(--gold);
+}
+.blog-time {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  font-weight: 300;
+}
+.blog-title {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--night);
+  line-height: 1.25;
+  margin-bottom: 0.75rem;
+}
+.blog-excerpt {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--text-light);
+  font-weight: 300;
+  margin-bottom: 1.2rem;
+}
+.blog-link {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: none;
+  transition: gap 0.2s ease;
+}
+.blog-link:hover { gap: 0.8rem; }
+
+/* ─── FAQ ─── */
+#faq { background: var(--night); }
+#faq .section-title { color: var(--parchment); }
+#faq .section-title em { color: var(--honey); }
+#faq .section-eyebrow { color: var(--honey); }
+#faq .section-eyebrow::before, #faq .section-eyebrow::after { background: var(--honey); }
+#faq .section-desc { color: rgba(250,245,236,0.6); }
+
+.faq-list { max-width: 760px; margin: 0 auto; }
+
+.faq-item {
+  border-bottom: 1px solid rgba(232,184,122,0.15);
+  overflow: hidden;
+}
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: none;
+  color: var(--parchment);
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.faq-question:hover { color: var(--honey); }
+.faq-icon {
+  width: 28px; height: 28px;
+  border: 1px solid rgba(232,184,122,0.35);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--honey);
+  font-size: 1rem;
+  flex-shrink: 0;
+  transition: transform 0.3s ease, background 0.2s;
+}
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
+  background: var(--honey);
+  color: var(--night);
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s;
+  padding-bottom: 0;
+}
+.faq-item.open .faq-answer {
+  max-height: 400px;
+  padding-bottom: 1.5rem;
+}
+.faq-answer p {
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: rgba(250,245,236,0.65);
+  font-weight: 300;
+}
+
+/* ─── CONTACTO ─── */
+#contacto { background: var(--cream); }
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 4rem;
+  align-items: start;
+}
+.contact-info h3 {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: var(--night);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+.contact-info p {
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: var(--text-light);
+  font-weight: 300;
+  margin-bottom: 2rem;
+}
+.contact-details { display: flex; flex-direction: column; gap: 1rem; }
+.contact-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.88rem;
+  color: var(--text-light);
+}
+.contact-detail-icon {
+  width: 38px; height: 38px;
+  background: var(--night);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.contact-form { display: flex; flex-direction: column; gap: 1.2rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--espresso);
+}
+input, textarea, select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid var(--mist);
+  background: white;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--text);
+  transition: border-color 0.2s;
+  outline: none;
+  cursor: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--gold);
+}
+textarea { resize: vertical; min-height: 120px; }
+select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M6 8L0 0h12z' fill='%23c9913a'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+.form-error { font-size: 0.72rem; color: #c0392b; font-weight: 500; display: none; }
+.form-error.show { display: block; }
+
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--night);
+  color: var(--parchment);
+}
+.form-success.show { display: block; }
+.form-success .success-icon { font-size: 3rem; margin-bottom: 1rem; }
+.form-success h4 {
+  font-family: var(--serif);
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--honey);
+  margin-bottom: 0.5rem;
+}
+.form-success p { font-size: 0.9rem; color: rgba(250,245,236,0.7); font-weight: 300; }
+
+/* ─── CART SIDEBAR ─── */
+.cart-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,16,8,0.5);
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  backdrop-filter: blur(4px);
+}
+.cart-overlay.open { opacity: 1; pointer-events: all; }
+
+.cart-sidebar {
+  position: fixed;
+  top: 0; right: 0;
+  width: min(420px, 100vw);
+  height: 100vh;
+  background: var(--parchment);
+  z-index: 2001;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.cart-sidebar.open { transform: translateX(0); }
+
+.cart-header {
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--mist);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--night);
+}
+.cart-header h3 {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--honey);
+}
+.cart-close {
+  background: none;
+  border: 1px solid rgba(232,184,122,0.3);
+  color: var(--honey);
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: none;
+  font-size: 1.1rem;
+  transition: var(--transition);
+}
+.cart-close:hover { background: var(--honey); color: var(--night); }
+
+.cart-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
+.cart-empty {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-light);
+}
+.cart-empty .empty-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
+.cart-empty p { font-size: 0.9rem; font-weight: 300; }
+
+.cart-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--mist);
+  align-items: center;
+}
+.cart-item-icon {
+  width: 56px; height: 56px;
+  background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.cart-item-info { flex: 1; }
+.cart-item-name {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--night);
+  margin-bottom: 0.2rem;
+}
+.cart-item-price {
+  font-size: 0.85rem;
+  color: var(--gold);
+  font-weight: 500;
+}
+.cart-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.qty-btn {
+  width: 28px; height: 28px;
+  border: 1px solid var(--mist);
+  background: white;
+  display: flex; align-items: center; justify-content: center;
+  cursor: none;
+  font-size: 1rem;
+  color: var(--espresso);
+  transition: var(--transition);
+}
+.qty-btn:hover { background: var(--night); color: var(--honey); border-color: var(--night); }
+.qty-num { font-size: 0.9rem; font-weight: 600; color: var(--night); min-width: 20px; text-align: center; }
+.cart-item-remove {
+  background: none;
+  border: none;
+  color: rgba(107,66,38,0.4);
+  cursor: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+  padding: 0.2rem;
+}
+.cart-item-remove:hover { color: #c0392b; }
+
+.cart-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--mist);
+  background: white;
+}
+.cart-subtotal {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--mist);
+}
+.cart-total span:first-child {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--espresso);
+}
+.cart-total-price {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--night);
+}
+.checkout-btn {
+  width: 100%;
+  background: var(--night);
+  color: var(--honey);
+  border: none;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 1rem;
+  cursor: none;
+  transition: var(--transition);
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+}
+.checkout-btn:hover { background: var(--honey); color: var(--night); }
+
+.checkout-success {
+  display: none;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+.checkout-success.show { display: block; }
+.checkout-success h4 {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--night);
+  margin: 0.5rem 0;
+}
+.checkout-success p { font-size: 0.85rem; color: var(--text-light); font-weight: 300; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--night);
+  padding: 4rem clamp(1rem, 5vw, 3rem) 2rem;
+  color: rgba(250,245,236,0.6);
+}
+.footer-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+.footer-brand .footer-logo {
+  font-family: var(--serif);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--honey);
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.footer-brand p {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: 240px;
+}
+.footer-col h5 {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--honey);
+  margin-bottom: 1rem;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.footer-col a {
+  font-size: 0.85rem;
+  color: rgba(250,245,236,0.55);
+  text-decoration: none;
+  cursor: none;
+  transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--honey); }
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(232,184,122,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-bottom p { font-size: 0.78rem; }
+.footer-bottom .origin-badge {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--honey);
+  display: flex; align-items: center; gap: 0.4rem;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .nosotros-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 700px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .nav-links.mobile-open {
+    display: flex;
+    position: absolute;
+    top: 70px;
+    left: 0; right: 0;
+    flex-direction: column;
+    background: rgba(28,16,8,0.97);
+    padding: 1.5rem;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(232,184,122,0.15);
+  }
+  .nav-links.mobile-open a { color: var(--honey); font-size: 1rem; }
+  .hero-stats { flex-direction: column; gap: 1.5rem; align-items: center; }
+  .stat-divider { display: none; }
+  .form-row { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .products-grid { grid-template-columns: 1fr; }
+  .blog-grid { grid-template-columns: 1fr; }
+  .caficultores-grid { grid-template-columns: 1fr; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div id="cursor">☕</div>
+
+<!-- Noise handled via CSS -->
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" class="nav-logo" onclick="navigate('inicio')">Café <span>Bombona</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="navigate('inicio')">Inicio</a></li>
+    <li><a href="#" onclick="navigate('productos')">Productos</a></li>
+    <li><a href="#" onclick="navigate('nosotros')">Nosotros</a></li>
+    <li><a href="#" onclick="navigate('blog')">Blog</a></li>
+    <li><a href="#" onclick="navigate('faq')">FAQ</a></li>
+    <li><a href="#" onclick="navigate('contacto')">Contacto</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="cart-btn hoverable" onclick="toggleCart()">
+      🛒 Carrito <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<aside class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>Tu Selección ☕</h3>
+    <button class="cart-close hoverable" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-body" id="cartBody">
+    <div class="cart-empty" id="cartEmpty">
+      <div class="empty-icon">☕</div>
+      <p>Tu carrito está vacío.<br>Descubre nuestros cafés de origen.</p>
+    </div>
+    <div id="cartItems"></div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-subtotal">
+      <span>Subtotal</span>
+      <span id="cartSubtotal">$0 COP</span>
+    </div>
+    <div class="cart-subtotal">
+      <span>Envío (Nariño)</span>
+      <span>Gratis 🌿</span>
+    </div>
+    <div class="cart-total">
+      <span>Total</span>
+      <span class="cart-total-price" id="cartTotal">$0</span>
+    </div>
+    <button class="checkout-btn hoverable" onclick="checkout()">
+      Finalizar pedido →
+    </button>
+  </div>
+  <div class="checkout-success" id="checkoutSuccess">
+    <div style="font-size:3rem">🌿</div>
+    <h4>¡Pedido recibido!</h4>
+    <p>Nos pondremos en contacto contigo pronto para coordinar tu entrega.<br><br>Gracias por apoyar el café de Nariño.</p>
+    <br>
+    <button class="btn-primary hoverable" onclick="resetCart()"><span>Seguir explorando</span></button>
+  </div>
+</aside>
+
+<!-- ═══════════════════ INICIO ═══════════════════ -->
+<section id="inicio" class="active">
+  <div style="position:relative; min-height:100vh;">
+    <div class="hero-bg"></div>
+    <div class="floating-elements" id="floatingElements"></div>
+    <div class="steam-container" id="steamContainer"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Nariño, Colombia · 2,400 msnm</div>
+      <h1 class="hero-title">Del <em>Páramo</em><br>a tu taza</h1>
+      <p class="hero-subtitle">
+        En las brumas del Galeras y los Andes nariñenses, nace un café que no se produce: se cuida. Cada taza de Bombona es el resultado de décadas de tradición y ciencia del suelo volcánico.
+      </p>
+      <div class="hero-ctas">
+        <button class="btn-primary hoverable" onclick="navigate('productos')"><span>Explorar catálogo</span></button>
+        <button class="btn-outline hoverable" onclick="navigate('nosotros')">Nuestra historia</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">2,450</div>
+          <div class="stat-label">Metros s.n.m.</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-num">38</div>
+          <div class="stat-label">Familias caficultoras</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Coffea arabica</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <div class="stat-num">87+</div>
+          <div class="stat-label">Puntos Q Grader</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marquee -->
+  <div class="marquee-section">
+    <div class="marquee-track" id="marqueeTrack"></div>
+  </div>
+
+  <!-- Segunda sección en inicio -->
+  <div style="background: var(--cream); padding: clamp(4rem,8vh,7rem) clamp(1rem,5vw,3rem);">
+    <div style="max-width:1200px; margin:0 auto;">
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:2rem; margin-bottom: 4rem;">
+        <div class="reveal" style="padding:2.5rem; background:white; border-top:3px solid var(--honey);">
+          <div style="font-size:2.5rem; margin-bottom:1rem;">🌋</div>
+          <h3 style="font-family:var(--serif); font-size:1.4rem; font-weight:600; color:var(--night); margin-bottom:0.75rem;">Suelo volcánico</h3>
+          <p style="font-size:0.88rem; line-height:1.75; color:var(--text-light); font-weight:300;">El volcán Galeras enriquece la tierra con minerales únicos que se expresan en tazas de compleja acidez brillante y dulzor prolongado.</p>
+        </div>
+        <div class="reveal" style="padding:2.5rem; background:white; border-top:3px solid var(--honey); transition-delay:0.1s">
+          <div style="font-size:2.5rem; margin-bottom:1rem;">🌿</div>
+          <h3 style="font-family:var(--serif); font-size:1.4rem; font-weight:600; color:var(--night); margin-bottom:0.75rem;">Sombra natural</h3>
+          <p style="font-size:0.88rem; line-height:1.75; color:var(--text-light); font-weight:300;">Cultivamos bajo dosel de guamo y nogal. La sombra ralentiza la maduración del fruto y concentra azúcares para una complejidad superior.</p>
+        </div>
+        <div class="reveal" style="padding:2.5rem; background:white; border-top:3px solid var(--honey); transition-delay:0.2s">
+          <div style="font-size:2.5rem; margin-bottom:1rem;">🔬</div>
+          <h3 style="font-family:var(--serif); font-size:1.4rem; font-weight:600; color:var(--night); margin-bottom:0.75rem;">Fermentación controlada</h3>
+          <p style="font-size:0.88rem; line-height:1.75; color:var(--text-light); font-weight:300;">Monitoreamos pH, temperatura y tiempo de cada lote. La fermentación es ciencia: milímetros de diferencia crean perfiles aromáticos únicos.</p>
+        </div>
+        <div class="reveal" style="padding:2.5rem; background:white; border-top:3px solid var(--honey); transition-delay:0.3s">
+          <div style="font-size:2.5rem; margin-bottom:1rem;">♻️</div>
+          <h3 style="font-family:var(--serif); font-size:1.4rem; font-weight:600; color:var(--night); margin-bottom:0.75rem;">Economía circular</h3>
+          <p style="font-size:0.88rem; line-height:1.75; color:var(--text-light); font-weight:300;">La pulpa del café se convierte en compost para los mismos cultivos. Cero residuos, máximo retorno a la tierra que nos alimenta.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ PRODUCTOS ═══════════════════ -->
+<section id="productos">
+  <div class="section-wrapper">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Catálogo de origen</div>
+      <h2 class="section-title">Cada lote, una <em>historia única</em></h2>
+      <p class="section-desc">Seleccionamos únicamente los cerezos en su punto óptimo de madurez. Pequeños lotes, trazabilidad total, sabor extraordinario.</p>
+    </div>
+
+    <div class="filter-bar reveal" id="filterBar">
+      <button class="filter-btn active hoverable" onclick="filterProducts('todos')">Todos</button>
+      <button class="filter-btn hoverable" onclick="filterProducts('natural')">Natural</button>
+      <button class="filter-btn hoverable" onclick="filterProducts('lavado')">Lavado</button>
+      <button class="filter-btn hoverable" onclick="filterProducts('honey')">Honey</button>
+      <button class="filter-btn hoverable" onclick="filterProducts('suscripcion')">Suscripción</button>
+    </div>
+
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ NOSOTROS ═══════════════════ -->
+<section id="nosotros">
+  <div class="section-wrapper">
+    <div class="nosotros-grid">
+      <div class="nosotros-text reveal-left">
+        <h2>Somos el café que<br><em>Nariño merece</em></h2>
+        <p>Café Bombona nació en 2016 en el municipio de Consacá, al pie del Galeras, cuando tres familias caficultoras decidieron dejar de vender su cosecha como commodity y comenzar a contar su historia en cada bolsa.</p>
+        <p><strong>El nombre "Bombona"</strong> hace honor al emblemático municipio nariñense donde la cultura del café es patrimonio vivo: procesiones de manos curtidas, tardes de trilla y el aroma constante de cereza fermentando en madera.</p>
+        <p>Hoy trabajamos directamente con <strong>38 familias</strong> en altitudes entre 1,800 y 2,450 msnm. Pagamos precio justo —siempre por encima del mercado— e invertimos en secadores solares y herramientas de medición para cada productor.</p>
+        <p>Nuestro Q Grader certifica cada lote. Nunca mezclamos orígenes. Lo que llega a tu taza es exactamente lo que cosechó <em>esa familia, en ese mes, en ese lote</em>.</p>
+      </div>
+      <div class="nosotros-visual reveal-right">
+        <div class="nosotros-card-visual">
+          <div class="visual-label">Altitud promedio</div>
+          <div class="visual-big">2,150m</div>
+          <div class="visual-sub">Sobre el nivel del mar</div>
+          <div class="visual-divider"></div>
+          <div class="visual-label">Precio al productor</div>
+          <div class="visual-big">+42%</div>
+          <div class="visual-sub">Por encima del precio FNC</div>
+          <div class="visual-divider"></div>
+          <div class="visual-label">Cosecha anual</div>
+          <div class="visual-big">18 ton</div>
+          <div class="visual-sub">Café pergamino seco de especialidad</div>
+          <div class="visual-divider"></div>
+          <div class="visual-label">Certificaciones</div>
+          <div class="visual-big">SCA</div>
+          <div class="visual-sub">Specialty Coffee Association · Q Grader</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="caficultores-section reveal">
+      <h3>Los guardines del <em style="font-family:var(--serif); font-style:italic">páramo</em></h3>
+      <div class="caficultores-grid" id="caficultoresGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ BLOG ═══════════════════ -->
+<section id="blog">
+  <div class="section-wrapper">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Conocimiento de origen</div>
+      <h2 class="section-title">La <em>ciencia y cultura</em> del café</h2>
+      <p class="section-desc">Artículos escritos por baristas, agrónomos y los propios caficultores de Nariño para entender cada etapa de la taza perfecta.</p>
+    </div>
+    <div class="blog-grid" id="blogGrid"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FAQ ═══════════════════ -->
+<section id="faq">
+  <div class="section-wrapper">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Preguntas frecuentes</div>
+      <h2 class="section-title">Todo lo que necesitas <em>saber</em></h2>
+      <p class="section-desc">Resolvemos tus dudas sobre nuestro café, procesos de envío y la cultura del café de especialidad.</p>
+    </div>
+    <div class="faq-list reveal" id="faqList"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CONTACTO ═══════════════════ -->
+<section id="contacto">
+  <div class="section-wrapper">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Escríbenos</div>
+      <h2 class="section-title">Conectemos sobre <em>café</em></h2>
+      <p class="section-desc">Ya sea para un pedido especial, una visita a la finca o una alianza comercial, estamos aquí.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="reveal-left">
+        <h3>Hablemos de lo que te <em style="font-family:var(--serif); font-style:italic">apasiona</em></h3>
+        <p>Ofrecemos visitas guiadas a nuestras fincas, talleres de cupping, envíos a todo Colombia y exportación a granel para importadores internacionales.</p>
+        <div class="contact-details">
+          <div class="contact-detail">
+            <div class="contact-detail-icon">📍</div>
+            <div><strong>Consacá, Nariño</strong><br><small>Vereda El Hatillo, vía Galeras</small></div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">📞</div>
+            <div><strong>+57 310 555 0192</strong><br><small>Lun–Sáb, 7am–6pm</small></div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">✉️</div>
+            <div><strong>hola@cafebombona.co</strong><br><small>Respuesta en menos de 24h</small></div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">🌐</div>
+            <div><strong>@cafebombona</strong><br><small>Instagram · Facebook · TikTok</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal-right">
+        <div id="contactFormWrapper">
+          <form class="contact-form" id="contactForm" onsubmit="submitForm(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fname">Nombre *</label>
+                <input type="text" id="fname" placeholder="Tu nombre">
+                <span class="form-error" id="fnameErr">Por favor ingresa tu nombre.</span>
+              </div>
+              <div class="form-group">
+                <label for="femail">Correo *</label>
+                <input type="email" id="femail" placeholder="tu@correo.com">
+                <span class="form-error" id="femailErr">Correo no válido.</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="fsubject">Asunto *</label>
+              <select id="fsubject">
+                <option value="">Selecciona un asunto…</option>
+                <option>Pedido o suscripción</option>
+                <option>Visita a la finca</option>
+                <option>Alianza comercial / exportación</option>
+                <option>Taller de cupping</option>
+                <option>Prensa y medios</option>
+                <option>Otro</option>
+              </select>
+              <span class="form-error" id="fsubjectErr">Selecciona un asunto.</span>
+            </div>
+            <div class="form-group">
+              <label for="fmessage">Mensaje *</label>
+              <textarea id="fmessage" placeholder="Cuéntanos sobre tu interés…"></textarea>
+              <span class="form-error" id="fmessageErr">Por favor escribe tu mensaje.</span>
+            </div>
+            <button type="submit" class="btn-primary hoverable" style="width:100%; padding:1.1rem; font-size:0.82rem;"><span>Enviar mensaje ☕</span></button>
+          </form>
+        </div>
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">🌿</div>
+          <h4>¡Mensaje enviado!</h4>
+          <p>Gracias por escribirnos. Nuestro equipo en Consacá te responderá en menos de 24 horas. ¡Que disfrutes tu próxima taza!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">Café Bombona</div>
+      <p>Café de especialidad cultivado en el páramo nariñense. Trazabilidad total, precio justo y sabor extraordinario desde 2016.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navegar</h5>
+      <ul>
+        <li><a href="#" onclick="navigate('inicio')">Inicio</a></li>
+        <li><a href="#" onclick="navigate('productos')">Catálogo</a></li>
+        <li><a href="#" onclick="navigate('nosotros')">Quiénes somos</a></li>
+        <li><a href="#" onclick="navigate('blog')">Blog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Servicios</h5>
+      <ul>
+        <li><a href="#">Suscripción mensual</a></li>
+        <li><a href="#">Cupping privado</a></li>
+        <li><a href="#">Visitas al origen</a></li>
+        <li><a href="#">Exportación</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Legal</h5>
+      <ul>
+        <li><a href="#">Términos y condiciones</a></li>
+        <li><a href="#">Política de privacidad</a></li>
+        <li><a href="#">Política de envíos</a></li>
+        <li><a href="#">Devoluciones</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Café Bombona SAS. Todos los derechos reservados.</p>
+    <div class="origin-badge">☕ Hecho con amor en Nariño, Colombia 🇨🇴</div>
+  </div>
+</footer>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────
+const products = [
+  { id:1, name:"Cereza del Galeras", process:"natural", icon:"🫘", desc:"Procesado natural en camas africanas. Notas intensas de frutos rojos del bosque, cacao oscuro y un retrogusto prolongado de vainilla.", notes:["Mora silvestre","Cacao","Vainilla"], rating:4.9, reviews:128, price:52000, badge:"Nuevo", category:"natural" },
+  { id:2, name:"Cóndor Lavado", process:"lavado", icon:"🌊", desc:"Fermentación anaeróbica de 36 horas. Acidez brillante tipo málico, cuerpo sedoso y fragancia floral que recuerda las flores del páramo nariñense.", notes:["Jazmín","Maracuyá","Té negro"], rating:4.8, reviews:94, price:48000, badge:"Especial", category:"lavado" },
+  { id:3, name:"Miel Volcánica", process:"honey", icon:"🍯", desc:"Proceso miel con el 50% de mucílago. Equilibrio perfecto entre dulzor meloso y acidez cítrica. Un café que seduce desde la primera infusión.", notes:["Miel de abeja","Durazno","Naranja"], rating:4.7, reviews:76, price:55000, badge:null, category:"honey" },
+  { id:4, name:"Páramo Black", process:"natural", icon:"⬛", desc:"Lote experimental. Fermentación extendida de 72 horas con inoculación de levaduras silvestres. Solo 40 bolsas disponibles por cosecha.", notes:["Ciruela pasa","Whisky","Tabaco noble"], rating:4.95, reviews:42, price:85000, badge:"Limitado", category:"natural" },
+  { id:5, name:"Suscripción Origen", process:"suscripcion", icon:"📦", desc:"Recibe cada mes el mejor lote de temporada directamente desde la finca. Incluye nota de cata del Q Grader y acceso a nuestra comunidad digital.", notes:["Sorpresa mensual","Q Grader","Comunidad"], rating:4.9, reviews:215, price:45000, badge:"Popular", category:"suscripcion" },
+  { id:6, name:"Aurora Honey", process:"honey", icon:"🌅", desc:"Cosecha de madrugada, cuando los azúcares del cereza están en su pico máximo. Proceso miel amarillo con secado de 21 días en camas elevadas.", notes:["Mango","Albaricoque","Caramelo"], rating:4.8, reviews:58, price:60000, badge:"Nuevo", category:"honey" },
+  { id:7, name:"Colectivo Washed", process:"lavado", icon:"💧", desc:"Mezcla cuidadosa de tres microlotes lavados de la vereda El Hatillo. Consistencia, claridad y limpieza en cada taza. Ideal para filtrado.", notes:["Manzana verde","Limón","Almendra"], rating:4.6, reviews:103, price:42000, badge:null, category:"lavado" },
+  { id:8, name:"Suscripción Premium", process:"suscripcion", icon:"🥇", desc:"Para el catador exigente. Lotes experimentales, ediciones limitadas y acceso prioritario a cosechas antes de agotarse. 250g mensuales.", notes:["Exclusivo","Experimental","Trazado"], rating:5.0, reviews:31, price:78000, badge:"Especial", category:"suscripcion" },
+];
+
+const caficultores = [
+  { name:"Doña Rosa Muñoz", region:"Consacá · Vereda El Hatillo", bio:"Lleva 32 años cultivando Caturra y Castillo en sus 3 hectáreas a 2,100 msnm. Sus camas africanas son referente de secado artesanal en todo Nariño.", avatar:"👩🏽‍🌾" },
+  { name:"Don Ernesto Portilla", region:"El Tambo · Las Mesas", bio:"Ingeniero agrónomo que regresó a la tierra de sus abuelos. Pionero en fermentaciones anaeróbicas en la región. Sus lotes alcanzan 88+ puntos SCA.", avatar:"👨🏽‍🌾" },
+  { name:"Familia Guerrero", region:"Sandoná · El Rosario", bio:"Tres generaciones cultivando en faldas del Galeras. Variedades antiguas de Typica conservadas desde 1940 que producen tazas de perfil histórico.", avatar:"👨‍👩‍👧" },
+  { name:"Jhon Casierra", region:"Linares · Alto El Peñol", bio:"El caficultor más joven de nuestra red, con 26 años. Estudió procesamiento en el SENA y experimenta con levaduras silvestres del bosque nativo.", avatar:"🧑🏽‍🌾" },
+];
+
+const blogPosts = [
+  { cat:"Origen", icon:"🌋", time:"7 min", title:"¿Por qué Nariño produce el mejor café de Colombia?", excerpt:"La convergencia del suelo volcánico del Galeras, la humedad del Pacífico y la altitud extrema crea condiciones irrepetibles para el café arábica." },
+  { cat:"Proceso", icon:"🔬", time:"5 min", title:"Fermentación anaeróbica: la nueva frontera del sabor", excerpt:"Controlar el oxígeno durante la fermentación permite a los caficultores diseñar perfiles de sabor con precisión milimétrica. Así funciona la ciencia detrás de la taza." },
+  { cat:"Preparación", icon:"☕", time:"4 min", title:"Cómo preparar el pour-over perfecto en casa", excerpt:"El método de goteo manual extrae lo mejor del café de especialidad. Temperatura, tiempo y flujo son las tres variables que debes dominar." },
+  { cat:"Cultura", icon:"🌿", time:"9 min", title:"El páramo como despensa: biodiversidad y café", excerpt:"Los páramos nariñenses son los ecosistemas más biodiversos del planeta por kilómetro cuadrado. Así se relacionan con la calidad del café que producimos." },
+  { cat:"Negocio", icon:"📊", time:"6 min", title:"Precio justo: cómo cambiamos la ecuación económica", excerpt:"Pagamos un 42% más que el precio de bolsa a nuestros caficultores. Este modelo no solo es ético: produce mejor café y comunidades más fuertes." },
+  { cat:"Ciencia", icon:"🧬", time:"8 min", title:"Varietales olvidados: el Typica de Sandoná", excerpt:"La familia Guerrero conserva plantas de Typica de 80 años. Estudiamos su perfil genético y descubrimos por qué producen tazas únicas en el mundo." },
+];
+
+const faqs = [
+  { q:"¿Cuánto tiempo tarda el envío a mi ciudad?", a:"Enviamos desde Consacá, Nariño, con operadores de confianza. A Pasto y municipios cercanos, de 1 a 2 días hábiles. Al resto de Colombia, de 3 a 5 días hábiles. Todos los pedidos incluyen código de rastreo." },
+  { q:"¿Qué significa que el café sea 'de especialidad'?", a:"El café de especialidad es aquel que alcanza 80 o más puntos en la escala de calidad de la Specialty Coffee Association (SCA), evaluado por un Q Grader certificado. Nuestros lotes oscilan entre 85 y 90+ puntos, lo que los ubica en el 5% superior de la producción mundial." },
+  { q:"¿Venden café molido o solo en grano?", a:"Ofrecemos ambas opciones. En grano es ideal para mantener la frescura máxima hasta 3 meses después del tueste. Si prefieres molido, selecciona el tipo de molienda al agregar el producto: espresso, filtro, prensa francesa o moka." },
+  { q:"¿Cómo funciona la suscripción mensual?", a:"Te enviamos entre 250g y 500g (a tu elección) del mejor lote disponible en la cosecha actual, cada mes. Incluye tarjeta con notas de cata del Q Grader, origen exacto y método de preparación sugerido. Cancela cuando quieras, sin penalización." },
+  { q:"¿Puedo visitar la finca en Nariño?", a:"Sí. Ofrecemos visitas guiadas los sábados y domingos, que incluyen recorrido por los cultivos, proceso de beneficio húmedo, sesión de cupping y almuerzo nariñense tradicional. Cupo limitado a 12 personas. Escríbenos para reservar." },
+  { q:"¿Hacen envíos internacionales?", a:"Sí, exportamos a granel (sacos de 30kg o 60kg) para importadores, tostadores y cafeterías internacionales. Para pedidos individuales al exterior, ofrecemos envío express a Estados Unidos, España y Chile. Contáctanos para coordinar." },
+  { q:"¿Qué variedad de café cultivan principalmente?", a:"Nuestros caficultores cultivan principalmente Caturra, Castillo Colombia y ejemplares antiguos de Typica. También tenemos pequeñas parcelas experimentales con Geisha, SL28 y Laurina bajo seguimiento técnico de nuestro agrónomo." },
+];
+
+const marqueeItems = ["Café de especialidad", "Sin intermediarios", "Q Grader certificado", "Comercio justo", "Nariño, Colombia", "2,450 msnm", "38 familias caficultoras", "87+ puntos SCA", "100% arábica"];
+
+// ─── CART ───────────────────────────────────────────────────────────
+let cart = [];
+
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  const existing = cart.find(i => i.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
+  updateCartUI();
+  const btn = document.getElementById(`btn-${id}`);
+  if (btn) {
+    btn.classList.add('added');
+    btn.querySelector('span').textContent = '✓ Agregado';
+    setTimeout(() => {
+      btn.classList.remove('added');
+      btn.querySelector('span').textContent = 'Agregar al carrito';
+    }, 2200);
+  }
+}
+
+function updateCartUI() {
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cartCount').textContent = count;
+  const empty = document.getElementById('cartEmpty');
+  const footer = document.getElementById('cartFooter');
+  const itemsEl = document.getElementById('cartItems');
+  const checkoutSuccess = document.getElementById('checkoutSuccess');
+  checkoutSuccess.classList.remove('show');
+
+  if (cart.length === 0) {
+    empty.style.display = 'block';
+    footer.style.display = 'none';
+    itemsEl.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+  footer.style.display = 'block';
+
+  itemsEl.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-icon">${item.icon}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">${formatCOP(item.price)}</div>
+      </div>
+      <div class="cart-item-controls">
+        <button class="qty-btn hoverable" onclick="changeQty(${item.id}, -1)">−</button>
+        <span class="qty-num">${item.qty}</span>
+        <button class="qty-btn hoverable" onclick="changeQty(${item.id}, 1)">+</button>
+        <button class="cart-item-remove hoverable" onclick="removeItem(${item.id})">✕</button>
+      </div>
+    </div>
+  `).join('');
+
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById('cartSubtotal').textContent = formatCOP(total);
+  document.getElementById('cartTotal').textContent = formatCOP(total);
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+  updateCartUI();
+}
+
+function removeItem(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCartUI();
+}
+
+function toggleCart() {
+  document.getElementById('cartSidebar').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+
+function checkout() {
+  if (cart.length === 0) return;
+  cart = [];
+  updateCartUI();
+  document.getElementById('cartEmpty').style.display = 'none';
+  document.getElementById('cartFooter').style.display = 'none';
+  document.getElementById('cartItems').innerHTML = '';
+  document.getElementById('checkoutSuccess').classList.add('show');
+}
+
+function resetCart() {
+  document.getElementById('checkoutSuccess').classList.remove('show');
+  document.getElementById('cartEmpty').style.display = 'block';
+  toggleCart();
+}
+
+function formatCOP(n) {
+  return '$' + n.toLocaleString('es-CO') + ' COP';
+}
+
+// ─── NAVIGATION ─────────────────────────────────────────────────────
+function navigate(sectionId) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(sectionId);
+  if (target) target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // close mobile menu
+  document.getElementById('navLinks').classList.remove('mobile-open');
+}
+
+// ─── PRODUCTS ───────────────────────────────────────────────────────
+function renderProducts(filter = 'todos') {
+  const grid = document.getElementById('productsGrid');
+  const filtered = filter === 'todos' ? products : products.filter(p => p.category === filter);
+
+  grid.innerHTML = filtered.map(p => {
+    const stars = '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 ? '½' : '');
+    const badgeMap = { 'Nuevo': 'badge-new', 'Especial': 'badge-special', 'Limitado': 'badge-limited', 'Popular': 'badge-new' };
+    return `
+      <div class="product-card reveal">
+        <div class="card-image">
+          ${p.badge ? `<div class="card-badges"><span class="badge ${badgeMap[p.badge]}">${p.badge}</span></div>` : ''}
+          <span style="position:relative;z-index:1">${p.icon}</span>
+        </div>
+        <div class="card-body">
+          <div class="card-process">${p.process.charAt(0).toUpperCase()+p.process.slice(1)}</div>
+          <div class="card-name">${p.name}</div>
+          <div class="card-desc">${p.desc}</div>
+          <div class="card-notes">${p.notes.map(n=>`<span class="note-tag">${n}</span>`).join('')}</div>
+          <div class="card-rating">
+            <span class="stars">${stars}</span>
+            <span class="rating-num">${p.rating} (${p.reviews} reseñas)</span>
+          </div>
+          <div class="card-footer">
+            <div>
+              <div class="card-price">${formatCOP(p.price)}<span class="card-price-sub">250g · Tostado reciente</span></div>
+            </div>
+            <button class="add-cart-btn hoverable" id="btn-${p.id}" onclick="addToCart(${p.id})">
+              <span>Agregar al carrito</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // re-observe new elements
+  grid.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+function filterProducts(filter) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderProducts(filter);
+}
+
+// ─── CAFICULTORES ────────────────────────────────────────────────────
+function renderCaficultores() {
+  document.getElementById('caficultoresGrid').innerHTML = caficultores.map(c => `
+    <div class="caficultor-card reveal">
+      <div class="caficultor-avatar">${c.avatar}</div>
+      <div class="caficultor-name">${c.name}</div>
+      <div class="caficultor-region">📍 ${c.region}</div>
+      <div class="caficultor-bio">${c.bio}</div>
+    </div>
+  `).join('');
+}
+
+// ─── BLOG ────────────────────────────────────────────────────────────
+function renderBlog() {
+  document.getElementById('blogGrid').innerHTML = blogPosts.map(p => `
+    <div class="blog-card reveal">
+      <div class="blog-card-img">${p.icon}</div>
+      <div class="blog-card-body">
+        <div class="blog-meta">
+          <span class="blog-cat">${p.cat}</span>
+          <span class="blog-time">⏱ ${p.time} lectura</span>
+        </div>
+        <div class="blog-title">${p.title}</div>
+        <div class="blog-excerpt">${p.excerpt}</div>
+        <a href="#" class="blog-link hoverable">Leer artículo →</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── FAQ ─────────────────────────────────────────────────────────────
+function renderFAQ() {
+  document.getElementById('faqList').innerHTML = faqs.map((f, i) => `
+    <div class="faq-item" id="faq-${i}">
+      <button class="faq-question hoverable" onclick="toggleFAQ(${i})">
+        ${f.q}
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer"><p>${f.a}</p></div>
+    </div>
+  `).join('');
+}
+
+function toggleFAQ(idx) {
+  const item = document.getElementById(`faq-${idx}`);
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// ─── MARQUEE ─────────────────────────────────────────────────────────
+function renderMarquee() {
+  const track = document.getElementById('marqueeTrack');
+  const doubled = [...marqueeItems, ...marqueeItems, ...marqueeItems];
+  track.innerHTML = doubled.map(item => `<span class="marquee-item">${item}</span>`).join('');
+}
+
+// ─── FLOATING ELEMENTS ───────────────────────────────────────────────
+function createFloatingElements() {
+  const emojis = ['☕', '🫘', '🌿', '🌱', '🍃', '🌸', '🌾', '🍂'];
+  const container = document.getElementById('floatingElements');
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'float-el';
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + '%';
+    el.style.animationDuration = (8 + Math.random() * 12) + 's';
+    el.style.animationDelay = (Math.random() * 10) + 's';
+    el.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+    container.appendChild(el);
+  }
+}
+
+function createSteam() {
+  const container = document.getElementById('steamContainer');
+  for (let i = 0; i < 8; i++) {
+    const s = document.createElement('div');
+    s.className = 'steam';
+    s.style.left = (20 + Math.random() * 60) + '%';
+    s.style.animationDelay = (Math.random() * 4) + 's';
+    s.style.animationDuration = (3 + Math.random() * 3) + 's';
+    s.style.width = (2 + Math.random() * 4) + 'px';
+    container.appendChild(s);
+  }
+}
+
+// ─── CURSOR ──────────────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+
+document.addEventListener('mouseover', e => {
+  if (e.target.closest('.hoverable, button, a, input, textarea, select')) {
+    cursor.classList.add('hover');
+  } else {
+    cursor.classList.remove('hover');
+  }
+});
+
+// ─── SCROLL OBSERVER ─────────────────────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+function observeReveal() {
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+    revealObserver.observe(el);
+  });
+}
+
+// ─── NAVBAR SCROLL ───────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ─── FORM ────────────────────────────────────────────────────────────
+function submitForm(e) {
+  e.preventDefault();
+  let valid = true;
+
+  const name = document.getElementById('fname').value.trim();
+  const email = document.getElementById('femail').value.trim();
+  const subject = document.getElementById('fsubject').value;
+  const msg = document.getElementById('fmessage').value.trim();
+
+  const fnameErr = document.getElementById('fnameErr');
+  const femailErr = document.getElementById('femailErr');
+  const fsubjectErr = document.getElementById('fsubjectErr');
+  const fmsgErr = document.getElementById('fmessageErr');
+
+  fnameErr.classList.toggle('show', !name);
+  femailErr.classList.toggle('show', !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+  fsubjectErr.classList.toggle('show', !subject);
+  fmsgErr.classList.toggle('show', !msg);
+
+  if (!name || !email || !subject || !msg || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+
+  document.getElementById('contactFormWrapper').style.display = 'none';
+  document.getElementById('formSuccess').classList.add('show');
+}
+
+// ─── MOBILE MENU ─────────────────────────────────────────────────────
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('mobile-open');
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+(function init() {
+  renderProducts();
+  renderCaficultores();
+  renderBlog();
+  renderFAQ();
+  renderMarquee();
+  createFloatingElements();
+  createSteam();
+  updateCartUI();
+  setTimeout(observeReveal, 100);
+
+  // Re-observe when navigating
+  document.querySelectorAll('nav a, .btn-primary, .btn-outline').forEach(el => {
+    el.addEventListener('click', () => setTimeout(observeReveal, 200));
+  });
+})();
+</script>
+</body>
+</html>
